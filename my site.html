@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Color Game</title>
+	<style>
+		body {
+    background-color: #232323;
+    margin: 0;
+    font-family: "Palatino Linotype","Avenir";
+}
+
+.square {
+	width: 30%;
+	background: purple;
+	padding-bottom: 30%;
+	float: left;
+    margin: 1.66%;
+    border-radius: 15%;
+    transition: background 0.6s;
+    --webkit-transition: background 0.6s;
+}
+
+#container {
+	margin: 20px auto;
+	max-width: 600px;
+}
+
+h1 {
+    color: white;
+    font-weight: normal;
+    text-align: center;
+    background: steelblue;
+    line-height: 1.1;
+    padding: 20px 0;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+#stripe {
+	background: white;
+	height: 30px;
+	text-align: center;
+	color: black;
+}
+
+#message{
+    display: inline-block;
+    width: 20%;
+}
+
+button:hover{
+    color: white;
+    background: steelblue;
+}
+
+.selected{
+    color: white;
+    background: steelblue;
+}
+
+button{
+    border: none;
+    background: none;
+    text-transform: uppercase;
+    font-family: "Palatino Linotype","Avenir";
+    height: 100%;
+    font-weight: 700;
+    color: steelblue;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    outline: none;
+}
+
+#colorDisplay{
+    font-size: 200%;
+}
+	</style>
+</head>
+<body>
+<h1>
+    The Great 
+    <br>
+    <span id="colorDisplay">RGB</span>
+    <br>
+     Color Game
+</h1>
+
+<div id="stripe">
+	<button id="reset">New Colors</button>
+    <span id="message"></span>
+    <button class="mode">Easy</button>
+    <button class = "mode selected">Hard</button>
+</div>
+
+<div id="container">
+	<div class="square"></div>
+	<div class="square"></div>
+	<div class="square"></div>
+	<div class="square"></div>
+	<div class="square"></div>
+	<div class="square"></div>
+</div>
+
+<script type="text/javascript">
+var numberOfSquares = 6;
+var colors = [];
+var pickedColor
+var squares = document.querySelectorAll(".square");
+var colorDisplay = document.getElementById("colorDisplay");
+var messageDisplay = document.querySelector("#message");
+var h1 = document.querySelector("h1");
+var resetButton = document.querySelector("#reset");
+var modeButtons = document.querySelectorAll(".mode")
+
+init();
+
+function init()
+{
+ 	setupModeButton();
+	setupSquares()
+	reset();
+}
+
+function setupModeButton(){
+	for(var i = 0; i<modeButtons.length; i++){
+		modeButtons[i].addEventListener("click", function(){
+			modeButtons[0].classList.remove("selected")
+			modeButtons[1].classList.remove("selected");
+			this.classList.add("selected")
+			if(this.textContent === "Easy")
+			{
+				numberOfSquares = 3;
+			}
+			else
+			{
+				numberOfSquares = 6;
+			}
+
+			reset();
+		})
+	}
+}
+
+function setupSquares(){
+	for(var i = 0; i < squares.length; i++){
+		// add initial colors to squares
+	
+		//add click listeners to squares
+		squares[i].addEventListener("click", function() {
+			//grab color of clicked squares
+			var clickedColor = this.style.background;
+			//compare color to pickedColor
+			if(clickedColor === pickedColor) {
+				messageDisplay.textContent = "Correct!";
+				resetButton.textContent = "Play Again?";
+				changeColors(clickedColor);
+				h1.style.background = clickedColor;
+			} else {
+				this.style.background = "#232323";
+				messageDisplay.textContent = "Try Again";
+			}
+		});
+	}
+
+}
+
+function reset(){
+	colors = generateRandomColors(numberOfSquares);
+	//pick a new random color from array
+	pickedColor = pickColor();
+	//change colorDisplay to match picked Color
+    colorDisplay.textContent = pickedColor;
+    resetButton.textContent = "New Colors"
+    messageDisplay.textContent = "";
+	//change colors of squares
+	for(var i = 0; i < squares.length; i++) {
+		if(colors[i])
+		{
+			squares[i].style.display = "block"
+			squares[i].style.background = colors[i];
+		}
+		else
+		{
+			squares[i].style.display = "none"
+		}
+	}
+	h1.style.background = "steelblue";
+}
+
+
+resetButton.addEventListener("click", function() {
+	reset();
+});
+
+//colorDisplay.textContent = pickedColor;
+
+function changeColors(color) {
+	//loop through all squares
+	for(var i = 0; i < squares.length; i++) {
+		//change each color to match given color
+		squares[i].style.background = color;
+	}
+}
+
+function pickColor() {
+	var random = Math.floor(Math.random() * colors.length);
+	return colors[random];
+}
+
+function generateRandomColors(num) {
+	//make an array
+	var arr = [];
+	//add num random colors to arr
+	for(var i = 0; i < num; i++) {
+		//get random color and push into arr
+		arr.push(randomColor());
+	}
+	//return that array
+	return arr;
+}
+
+function randomColor() {
+	//pick a "red" from 0 - 255
+	var r = Math.floor(Math.random() * 256);
+	//pick a "green" from 0 - 255
+	var g = Math.floor(Math.random() * 256);
+	//pick a "blue" from 0 - 255
+	var b = Math.floor(Math.random() * 256);
+	return "rgb(" + r + ", " + g + ", " + b + ")";
+}
+</script>
+</body>
+</html>
